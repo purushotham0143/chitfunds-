@@ -1,0 +1,86 @@
+///slider Explanation
+1. Next Slide Logic:
+js
+Copy
+Edit
+setCurrent((prev) => (prev + 1) % images.length);
+This line calculates the next slide index. The logic behind this is:
+
+It takes the current index (prev).
+
+It increments it by 1 (prev + 1).
+
+It then uses the modulus operator (% images.length) to make sure the index wraps around when it reaches the end of the array (i.e., after the last image, it will go back to the first one).
+
+Example 1 (starting at prev = 0):
+prev = 0
+
+(prev + 1) = 0 + 1 = 1
+
+1 % 4 = 1 (The index wraps around when it reaches 4)
+
+Result: It will move to the second image (index 1).
+
+Example 2 (starting at prev = 3):
+prev = 3
+
+(prev + 1) = 3 + 1 = 4
+
+4 % 4 = 0 (When prev is at the last index, it will cycle back to 0)
+
+Result: It will loop back to the first image (index 0).
+
+Example 3 (starting at prev = 2):
+prev = 2
+
+(prev + 1) = 2 + 1 = 3
+
+3 % 4 = 3 (The index stays at 3, the third image)
+
+Result: It will go to the third image (index 3).
+
+2. Previous Slide Logic:
+js
+Copy
+Edit
+setCurrent((prev) => (prev - 1 + images.length) % images.length);
+This line calculates the previous slide index. The logic behind this is:
+
+It takes the current index (prev).
+
+It decrements it by 1 (prev - 1).
+
+It adds images.length before taking the modulus to ensure that it always results in a positive number, even when prev is 0. This is used to handle the "wrap around" when going backwards (i.e., from the first image, it should go to the last image).
+
+Example 1 (starting at prev = 0):
+prev = 0
+
+(prev - 1 + 4) = 0 - 1 + 4 = 3
+
+3 % 4 = 3
+
+Result: It will loop back to the last image (index 3).
+
+Example 2 (starting at prev = 3):
+prev = 3
+
+(prev - 1 + 4) = 3 - 1 + 4 = 6
+
+6 % 4 = 2
+
+Result: It will move to the third image (index 2).
+
+Example 3 (starting at prev = 2):
+prev = 2
+
+(prev - 1 + 4) = 2 - 1 + 4 = 5
+
+5 % 4 = 1
+
+Result: It will move to the second image (index 1).
+
+
+
+
+
+//

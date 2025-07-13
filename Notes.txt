@@ -1,0 +1,205 @@
+//CodeEvualation Youtube channels
+React Notes
+*Actually we have inbuilt application if we use it our development will be late so we will  create  your Own application
+##Process 
+*How to create React application
+npx create-react-app my-app
+cd my-app
+npm start
+
+
+* How to install 3 version tailwindcss
+//npm install tailwindcss@3
+// npx tailwindcss@3 init
+// npm tailwindcss@3 -i ./ -o ./
+
+
+// To install React  vite
+1.npm create vite@latest
+2.give name of the folder 
+3.select react 
+4.select javascript ||typescript
+5.npm install  --To install Dependencys in our project 
+6.npm run dev -To run  the Projecct
+ 
+//To install tailwind css
+
+1.npm install tailwindcss @tailwindcss/vite
+//npm install for Dependencys 
+2.go to the vite.config.ts
+vite.config.ts
+import { defineConfig } from 'vite'
+import tailwindcss from '@tailwindcss/vite'  // Import only this 
+export default defineConfig({
+  plugins: [
+    tailwindcss(), //And import this also
+  ],
+})
+3.in index.css ->@import "tailwindcss";
+click on the folder and open terminal the write npm run dev -you will ip addres then click on it
+
+*what is jsx:-we call it javascript+XML
+it is used to write  usedfriendly html code in javascript in ract
+this is used for code reusabulity in react
+/JSX-actually it is syntex extension of javascript
+Using Babel Libaray it will convert the  this html code into React code then React will creat the virtual Dom  
+
+*Components:-Here we havev to ways(Functional&class)
+
+*ways to apply css
+
+*props:parameters in js and this in html propertys means like in html we have id,class,style like this :-Here we can create Our own propertis  in react  and also we can use Existing  probs
+
+*Conditional rendering:-rendering Means Showing the content in the web page condition means if you click then it has to visible like this
+
+*React Events 
+
+*React List :-Like map
+*Form Handiling 
+
+*Fragments:-features the Allows Developers to group multiple elements together withput adding extra Nodes to the Dom
+*Advance Concepts
+
+-Components Life cycle Method :-To maintain the state of the Components we use this *This will work onyl for indudial versions only 
+
+-React Hooks:-Means Methods used to maintain the state of the Functional Compound
+-Rdux-Means this is libaray this is used to share the shareable data and also we can tranverse the data to any component in  react
+
+
+//About package files
+*robots.txt this is used to  allow and disallow chiyadaniki manam appudu aieti Deploy chistamo 
+manifest.json-menas eddi logo vuntundi browser 
+*reportwevital.js-this is used to measure the Performance of the server
+*setupTest.js-this is used to  set testing
+*gitgone-edi mana istam vachina files ni push chiyavachu likapothi ekkkda apukovachu
+*Ekkada manam nodemodules push chiyam appudina oka use mana github lo nunchi clone chisukoni run chiyali anti package.json vuntundi appudu terminal lo npm start ani kodithi nodemodules motam adi set cchostundi 
+
+**React is declearative
+**javascript-imparative 
+**deffing is used in react using Virtual Dom
+
+
+
+//Functional Compound
+1.function will return simple tsx
+2.One way communication it you are Not useing the state management in the code 
+ 
+
+//Class Compound
+1.reder Method Will invoke then it will return  tsx beause in calss we cant return anything 
+2.class will recive all in probs By default it will one parameter Prob //Here we have to use  the uisng the this.probs.name like this 
+3.Hooks are Predifined in the class
+
+
+
+//chicode for react
+//rafc-for function Component 
+
+
+
+
+//Message Alerts
+
+Add Toasts Instead of Alert
+For better UX, you can use libraries like:
+
+->react-toastify
+
+
+// To validate the Form 
+ "react-hook-form";
+
+
+
+
+ ******About Session 
+
+  What is the secret key?
+The secret key is a string used by Express-session to sign the session ID cookie. It ensures that the cookie is tamper-proof, meaning no one can modify the cookie data on the client side without invalidating the session.
+
+ Why is it important?
+It is used to create a hash (HMAC) for the cookie.
+
+Without a proper secret, your session can be vulnerable to attacks (like cookie tampering or session hijacking).
+
+🛡️ What should you do?
+Do not use 'yourSecretKey' in production. Instead:
+
+Generate a strong, random string.
+
+Keep it private (never push it to GitHub).
+
+Use an environment variable.
+
+✅ Example (using environment variable):
+js
+Copy
+Edit
+require('dotenv').config();
+
+app.use(session({
+  secret: process.env.SESSION_SECRET,  // stored in .env file
+  resave: false,
+  saveUninitialized: true,
+  rolling: false,
+  cookie: {
+    secure: false,
+    maxAge: 1000 * 60 * 60 * 2
+  }
+}));
+.env file:
+
+env
+Copy
+Edit
+SESSION_SECRET="my$tr0ng&Rand0m!K3y123"
+Let me know if you want help generating a strong session secret or securing .env.
+
+
+
+
+
+
+
+
+You said:
+resave: false,
+  saveUninitialized: true,
+
+what  this both will do 
+
+
+ChatGPT said:
+Great question! Let’s break down what these two session options mean in Express-session:
+
+🔁 resave: false
+🔍 What it does:
+This tells Express not to save the session back to the session store if it hasn’t been modified during the request.
+
+✅ Why it's good:
+Prevents unnecessary writes to the session store (e.g., MongoDB, Redis).
+
+Improves performance and reduces I/O.
+
+❗ If you set resave: true:
+It will save the session on every request, even if nothing changed — which is wasteful.
+
+🆕 saveUninitialized: true
+🔍 What it does:
+This means a session will be saved to the store even if it is new and unmodified.
+
+🤔 Why use it?
+Useful if you want to set up a session before storing anything in it — such as showing a session cookie to track a visitor.
+
+⚠️ But be cautious:
+Can result in lots of empty sessions being stored.
+
+In many production apps, we set it to false unless there's a specific reason.
+
+🔒 Recommended production setting (usually):
+js
+Copy
+Edit
+resave: false,
+saveUninitialized: false,
+Only enable saveUninitialized: true if you intentionally want to create sessions for unauthenticated users (like tracking page visits or guest carts).
