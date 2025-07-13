@@ -94,14 +94,15 @@ app.use(session({
     sameSite: isProduction ? 'none' : 'lax' // 'none' for cross-origin on Vercel
   }
 }))
+//  Setup allowed frontend origin
+const FRONTEND_ORIGIN = isProduction
+  ? 'https://chitfunds-fff.vercel.app'
+  : 'http://localhost:5173';
 
-//  Middleware
-// When you have eployed on the versal give that url also here
+//  Enable CORS correctly BEFORE other middleware
 app.use(cors({
-  origin: isProduction
-     ? process.env.FRONTEND_URL_PROD
-    : process.env.FRONTEND_URL_DEV,
-  credentials: true,
+  origin: FRONTEND_ORIGIN,
+  credentials: true
 }));
 
 // Increase body size limit for large base64 image uploads
@@ -265,7 +266,7 @@ app.put("/api/updatechit/:id", async (req, res) => {
     }
 
     res.json(result);
-  } catch (error) {
+  } catch (error) {   
     console.error("Error updating chit:", error);
     res.status(500).json({ message: "Internal server error" });
   }

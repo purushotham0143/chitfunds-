@@ -4,6 +4,8 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from './UserContext'; //  context file we'll create
 import { toast } from 'react-toastify';
+const Vercel_PATH = import.meta.env.VITE_API_URL
+
 // Define the expected context type
 interface UserContextType {
   setUser: (user: any) => void;
@@ -39,13 +41,13 @@ const Login = () => {
     toast.error(" Please select a valid role");
     return;
   }
-
+ console.log("API Endpoint:", Vercel_PATH);
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/login`, {
+    const res = await fetch(`${Vercel_PATH}/api/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+       credentials: 'include',  //  very important for session to work
       body: JSON.stringify(formData),
-      credentials: 'include',  //  very important for session to work
     });
 
     const data = await res.json();
