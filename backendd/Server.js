@@ -98,6 +98,9 @@ const FRONTEND_ORIGIN = isProduction
   ? process.env.FRONTEND_URL_PROD
   : process.env.FRONTEND_URL_DEV;
 
+console.log('Using CORS origin:', FRONTEND_ORIGIN); // ✅ Debug
+console.log('isProduction:', isProduction);         // ✅ Debug
+
 app.use(cors({
   origin: FRONTEND_ORIGIN,
   credentials: true,
@@ -126,12 +129,26 @@ app.get('/',(req,res)=>{
 })
 
 //  File Upload Endpoint
+// app.post('/upload', upload.single('photo'), (req, res) => {
+//   if (!req.file) {
+//     return res.status(400).send('No file uploaded.');
+//   }
+//   res.json({ filePath: `http://localhost:${PORT}/uploads/${req.file.filename}` });
+// });
+
+// File Upload Endpoint (updated to return correct URL)
 app.post('/upload', upload.single('photo'), (req, res) => {
   if (!req.file) {
     return res.status(400).send('No file uploaded.');
   }
-  res.json({ filePath: `http://localhost:${PORT}/uploads/${req.file.filename}` });
+
+  const baseUrl = isProduction
+    ? 'https://chitfunds-backkkkkk.onrender.com' //  Your Render URL
+    : `http://localhost:${PORT}`;
+
+  res.json({ filePath: `${baseUrl}/uploads/${req.file.filename}` });
 });
+
 
 // Login Endpoint
 app.post('/api/login', async (req, res) => {
