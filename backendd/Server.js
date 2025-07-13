@@ -96,7 +96,7 @@ app.use(session({
 }))
 //  Setup allowed frontend origin
 const FRONTEND_ORIGIN = isProduction
-  ? 'https://chitfunds-fff.vercel.app'
+  ? process.env.FRONTEND_URL_PROD
   : 'http://localhost:5173';
 
 //  Enable CORS correctly BEFORE other middleware
