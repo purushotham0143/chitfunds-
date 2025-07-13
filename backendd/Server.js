@@ -156,34 +156,36 @@ app.post('/upload', upload.single('photo'), (req, res) => {
 
 
 // Login Endpoint
+// Login Endpoint
 app.post('/api/login', async (req, res) => {
   const { name, password, role } = req.body;
-  console.log("Received login data:", { name, password, role }); // ✅ Add this
 
   try {
     if (!name || !password || !role) {
-      console.log("Missing fields");
       return res.status(400).json({ success: false, message: 'Missing fields' });
     }
 
     const user = await LoginUser.findOne({ name, password, role });
 
     if (user) {
+      // ✅ Store minimal session info
       req.session.user = {
         id: user._id,
         name: user.name,
         role: user.role,
       };
-      res.json({ success: true, user: req.session.user });
+
+      // ✅ Return full user to frontend
+      res.json({ success: true, user });  // << send the entire user
     } else {
-      console.log("Invalid credentials");
       res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
   } catch (err) {
-    console.error('Login error:', err);  // ✅ Show actual error
+    console.error('Login error:', err);
     res.status(500).json({ success: false, message: 'Server error' });
   }
 });
+
 
 //  Logout endpoint
 app.post('/api/logout', (req, res) => {

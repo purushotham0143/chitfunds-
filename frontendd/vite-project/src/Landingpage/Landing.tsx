@@ -79,49 +79,75 @@ const Landing = () => {
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  const file = e.target.files[0];
+  console.log("Selected raw file:", file); // ✅ Check if file is selected
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreviewPhoto(reader.result); // Show preview
-      setSelectedFile(reader.result); // Save base64 to upload later
-    };
-    reader.readAsDataURL(file);
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    console.log("File converted to base64:", reader.result); // ✅ Confirm conversion
+    setPreviewPhoto(reader.result);
+    setSelectedFile(reader.result);
   };
+  reader.readAsDataURL(file);
+};
+
+
 
   const handleSave = async () => {
-    if (!selectedFile || !user?._id) return;
+    console.log("selectedFile:", selectedFile);     // Should show base64 string ✅
+console.log("user:", user);                     // Is user null or missing?
+console.log("user._id:", user?._id);            // Confirm _id is present
 
-    try {
-      const updatedUser = { ...user, photo: selectedFile };
-      setUser(updatedUser);
-      localStorage.setItem("user", JSON.stringify(updatedUser));
+  if (!selectedFile || !user?.id) {
+    console.log("Missing selectedFile or user ID");
+    return;
+  }
 
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/users/${user._id}/upload-photo`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ photo: selectedFile }),
-        }
-      );
+  console.log("Selected file (base64):", selectedFile);
+  console.log("User ID:", user._id);
 
-      if (!response.ok) throw new Error("Upload failed");
+  const apiUrl = `${import.meta.env.VITE_API_URL}/api/users/${user.id}/upload-photo`;
+  console.log("Uploading to:", apiUrl);
 
-      toast.success("Profile photo updated!");
-      setPreviewPhoto(null);
-      setSelectedFile(null);
-      setShowDropdown(false);
-    } catch (error) {
-      toast.error(
-        " Error uploading photo: " +
-          (error instanceof Error ? error.message : String(error))
-      );
+  try {
+    const updatedUser = { ...user, photo: selectedFile };
+
+    const response = await fetch(apiUrl, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ photo: selectedFile }),
+    });
+
+    console.log("Response status:", response.status);
+
+    const responseData = await response.json().catch(() => ({}));
+    console.log("Response data:", responseData);
+
+    if (!response.ok) {
+      console.error("Upload failed with status", response.status);
+      throw new Error("Upload failed");
     }
-  };
+
+    // ✅ Only update user after confirming success
+    setUser(updatedUser);
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+    toast.success("Profile photo updated!");
+    setPreviewPhoto(null);
+    setSelectedFile(null);
+    setShowDropdown(false);
+  } catch (error) {
+    console.error("Upload error:", error);
+    toast.error(
+      "Error uploading photo: " +
+        (error instanceof Error ? error.message : String(error))
+    );
+  }
+};
+
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -273,7 +299,7 @@ const Landing = () => {
 
                       try {
                         const response = await fetch(
-                          `http://localhost:5000/api/users/${user._id}/upload-photo`,
+                          `${import.meta.env.VITE_API_URL}/api/users/${user._id}/upload-photo`,
                           {
                             method: "PUT",
                             headers: {
