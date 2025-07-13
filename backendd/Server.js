@@ -94,15 +94,13 @@ app.use(session({
     sameSite: isProduction ? 'none' : 'lax' // 'none' for cross-origin on Vercel
   }
 }))
-//  Setup allowed frontend origin
 const FRONTEND_ORIGIN = isProduction
   ? process.env.FRONTEND_URL_PROD
-  : 'http://localhost:5173';
+  : process.env.FRONTEND_URL_DEV;
 
-//  Enable CORS correctly BEFORE other middleware
 app.use(cors({
   origin: FRONTEND_ORIGIN,
-  credentials: true
+  credentials: true,
 }));
 
 // Increase body size limit for large base64 image uploads
