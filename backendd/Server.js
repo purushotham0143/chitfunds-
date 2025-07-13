@@ -122,6 +122,10 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+app.get('/',(req,res)=>{
+  res.send("Hello Purushootham");
+})
+
 //  File Upload Endpoint
 app.post('/upload', upload.single('photo'), (req, res) => {
   if (!req.file) {
