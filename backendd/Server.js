@@ -17,9 +17,14 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 
 
-mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log(' Connected to MongoDB'))
-  .catch((err) => console.error(' MongoDB connection error:', err));
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log('✅ Connected to MongoDB'))
+.catch((err) => {
+  console.error('❌ MongoDB connection error:', err); // Make this visible
+});
 
 //  Schema and Models
 const memberSchema = new mongoose.Schema({
@@ -153,11 +158,17 @@ app.post('/upload', upload.single('photo'), (req, res) => {
 // Login Endpoint
 app.post('/api/login', async (req, res) => {
   const { name, password, role } = req.body;
+  console.log("Received login data:", { name, password, role }); // ✅ Add this
 
   try {
+    if (!name || !password || !role) {
+      console.log("Missing fields");
+      return res.status(400).json({ success: false, message: 'Missing fields' });
+    }
+
     const user = await LoginUser.findOne({ name, password, role });
+
     if (user) {
-      // store user data in session
       req.session.user = {
         id: user._id,
         name: user.name,
@@ -165,13 +176,15 @@ app.post('/api/login', async (req, res) => {
       };
       res.json({ success: true, user: req.session.user });
     } else {
-      res.json({ success: false, message: 'Invalid credentials' });
+      console.log("Invalid credentials");
+      res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
   } catch (err) {
-    console.error('Login error:', err);
+    console.error('Login error:', err);  // ✅ Show actual error
     res.status(500).json({ success: false, message: 'Server error' });
   }
 });
+
 //  Logout endpoint
 app.post('/api/logout', (req, res) => {
   req.session.destroy((err) => {

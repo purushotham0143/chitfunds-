@@ -48,6 +48,7 @@ const Login = () => {
       headers: { 'Content-Type': 'application/json' },
        credentials: 'include',  //  very important for session to work
       body: JSON.stringify(formData),
+      
     });
 
     const data = await res.json();
