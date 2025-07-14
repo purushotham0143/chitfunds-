@@ -174,182 +174,262 @@ console.log("user._id:", user?._id);            // Confirm _id is present
 
   return (
     <div>
-      <nav className="flex justify-between bg-orange-500 text-black p-2 rounded-sm items-center">
+      // Replace your entire nav section with this version that handles login state changes:
+
+<nav className="bg-orange-500 text-black p-2 rounded-sm relative">
+  {/* Mobile Layout */}
+  <div className="md:hidden">
+    {/* Top Row - Logo, Search, Profile */}
+    <div className="flex justify-between items-center mb-2">
+      <img
+        className="w-8 h-8 rounded-full flex-shrink-0"
+        src="/imagess/image1.png"
+        alt="Logo"
+      />
+      <input
+        type="search"
+        placeholder="Search.."
+        className="flex-1 mx-2 px-2 py-1 rounded text-sm min-w-0"
+        style={{ maxWidth: '120px' }}
+      />
+      <div className="relative flex items-center flex-shrink-0">
         <img
-          className="w-10 h-10 rounded-full"
-          src="/imagess/image1.png"
-          alt="Logo"
+          src={user?.photo || "/imagess/image2.png"}
+          alt="User"
+          className="w-8 h-8 rounded-full cursor-pointer object-cover"
+          onClick={() => setShowModal(true)}
         />
-        <input
-          type="search"
-          placeholder="Search.."
-          className="px-2 py-1 rounded"
-        />
-        <Link to="/">Home</Link>
-        <Link to="/About">About</Link>
-        <Link to="/Details">Details</Link>
-
-        {/* Move this inside a user check */}
         {user && (
-          <select
-            defaultValue=""
-            onChange={(e) => handleChitSongDateChange(e.target.value)}
-            className="px-2 py-1 rounded"
-          >
-            <option value="" disabled>
-              Select Chit Song Date
-            </option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="5">5</option>
-            <option value="10">10</option>
-          </select>
-        )}
-
-        {user?.role === "admin" && (
-          <>
-            <Link to="/NewChit" className="text-blue-700 hover:underline">
-              Create new Chitfund
-            </Link>
-            <Link to="/Add" className="text-blue-700 hover:underline">
-              AddMember
-            </Link>
-          </>
-        )}
-
-        {user ? (
           <button
-            onClick={handleLogout}
-            className="text-red-600 hover:underline"
-          >
-            Logout
-          </button>
-        ) : (
-          <Link to="/Login" className="hover:underline">
-            Login
-          </Link>
-        )}
-
-        <div className="relative flex items-center gap-2">
-          {/*  Profile Image with Zoom on Hover */}
-          <img
-            src={user?.photo || "/imagess/image2.png"}
-            alt="User"
-            className="w-10 h-10 rounded-full cursor-pointer object-cover transition-transform duration-300 hover:scale-150"
-            onClick={() => setShowModal(true)}
-          />
-
-          {/*  Dropdown Toggle Button */}
-          <button
-            className="text-white bg-orange-400 px-2 py-1 rounded hover:bg-orange-600 text-sm"
+            className="text-white bg-orange-400 px-1 py-1 rounded hover:bg-orange-600 text-xs ml-1"
             onClick={(e) => {
               e.stopPropagation();
               setShowDropdown((prev) => !prev);
             }}
           >
-            ⚙️ Edit
+            ⚙️
           </button>
+        )}
+      </div>
+    </div>
 
-          {/*  Dropdown Menu */}
-          {showDropdown && user && (
-            <div className="absolute top-14 right-0 bg-white border p-4 rounded shadow z-50 min-w-[200px]">
-              <p className="font-bold mb-2">{user.name}</p>
+    {/* Second Row - Main Navigation */}
+    <div className="flex justify-between items-center mb-2">
+      <div className="flex gap-2 text-sm flex-wrap">
+        <Link to="/" className="hover:underline whitespace-nowrap">Home</Link>
+        <Link to="/About" className="hover:underline whitespace-nowrap">About</Link>
+        <Link to="/Details" className="hover:underline whitespace-nowrap">Details</Link>
+      </div>
+      
+      {user ? (
+        <button
+          onClick={handleLogout}
+          className="text-red-600 hover:underline text-xs bg-white px-2 py-1 rounded whitespace-nowrap"
+        >
+          Logout
+        </button>
+      ) : (
+        <Link to="/Login" className="hover:underline text-xs bg-white px-2 py-1 rounded whitespace-nowrap">
+          Login
+        </Link>
+      )}
+    </div>
 
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Upload Profile Photo
-              </label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="text-sm"
-              />
-
-              {/*  Preview of selected image */}
-              {previewPhoto && (
-                <img
-                  src={previewPhoto}
-                  alt="Preview"
-                  className="w-16 h-16 mt-2 rounded-full object-cover border"
-                />
-              )}
-
-              {/* Save &  Reset Buttons */}
-              <div className="flex gap-2 mt-3">
-                {selectedFile && (
-                  <button
-                    onClick={handleSave}
-                    className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-                  >
-                    Save
-                  </button>
-                )}
-
-                {user?.photo && (
-                  <button
-                    onClick={async () => {
-                      const confirmed = window.confirm(
-                        "Are you sure you want to remove the profile photo?"
-                      );
-                      if (!confirmed) return;
-
-                      const updatedUser = { ...user, photo: null };
-                      setUser(updatedUser);
-                      localStorage.setItem("user", JSON.stringify(updatedUser));
-
-                      try {
-                        const response = await fetch(
-                          `${import.meta.env.VITE_API_URL}/api/users/${user._id}/upload-photo`,
-                          {
-                            method: "PUT",
-                            headers: {
-                              "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({ photo: null }),
-                          }
-                        );
-
-                        if (!response.ok) throw new Error("Delete failed");
-                        toast.success(" Profile photo removed!");
-                      } catch (error) {
-                        console.error("Error removing photo:", error);
-                      }
-                    }}
-                    className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
-                  >
-                    Reset
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* 🖼️ Fullscreen Modal for Viewing */}
-          {showModal && user?.photo && (
-            <div
-              className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
-              onClick={() => setShowModal(false)}
-            >
-              <div
-                className="relative bg-white p-4 rounded-lg shadow-lg max-w-[90%] max-h-[90%]"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <img
-                  src={user.photo}
-                  alt="Full View"
-                  className="max-h-[75vh] w-auto object-contain mx-auto"
-                />
-                <button
-                  className="absolute top-2 right-2 text-black bg-gray-200 px-2 py-1 rounded hover:bg-gray-300"
-                  onClick={() => setShowModal(false)}
-                >
-                  ✕
-                </button>
-              </div>
-            </div>
+    {/* Third Row - Admin & Select (only when user is logged in) */}
+    {user && (
+      <div className="flex justify-between items-center gap-2">
+        <div className="flex gap-1 text-xs flex-wrap">
+          {user?.role === "admin" && (
+            <>
+              <Link to="/NewChit" className="text-blue-700 hover:underline bg-white px-2 py-1 rounded whitespace-nowrap">
+                New Chit
+              </Link>
+              <Link to="/Add" className="text-blue-700 hover:underline bg-white px-2 py-1 rounded whitespace-nowrap">
+                Add Member
+              </Link>
+            </>
           )}
         </div>
-      </nav>
+        
+        <select
+          defaultValue=""
+          onChange={(e) => handleChitSongDateChange(e.target.value)}
+          className="px-1 py-1 rounded text-xs flex-shrink-0"
+          style={{ minWidth: '80px' }}
+        >
+          <option value="" disabled>Date</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="5">5</option>
+          <option value="10">10</option>
+        </select>
+      </div>
+    )}
+  </div>
+
+  {/* Desktop Layout - Hidden on mobile */}
+  <div className="hidden md:flex justify-between items-center">
+    <img
+      className="w-10 h-10 rounded-full"
+      src="/imagess/image1.png"
+      alt="Logo"
+    />
+    <input
+      type="search"
+      placeholder="Search.."
+      className="px-2 py-1 rounded"
+    />
+    <Link to="/">Home</Link>
+    <Link to="/About">About</Link>
+    <Link to="/Details">Details</Link>
+
+    {user && (
+      <select
+        defaultValue=""
+        onChange={(e) => handleChitSongDateChange(e.target.value)}
+        className="px-2 py-1 rounded"
+      >
+        <option value="" disabled>Select Chit Song Date</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="5">5</option>
+        <option value="10">10</option>
+      </select>
+    )}
+
+    {user?.role === "admin" && (
+      <>
+        <Link to="/NewChit" className="text-blue-700 hover:underline">
+          Create new Chitfund
+        </Link>
+        <Link to="/Add" className="text-blue-700 hover:underline">
+          AddMember
+        </Link>
+      </>
+    )}
+
+    {user ? (
+      <button
+        onClick={handleLogout}
+        className="text-red-600 hover:underline"
+      >
+        Logout
+      </button>
+    ) : (
+      <Link to="/Login" className="hover:underline">
+        Login
+      </Link>
+    )}
+
+    <div className="relative flex items-center gap-2">
+      <img
+        src={user?.photo || "/imagess/image2.png"}
+        alt="User"
+        className="w-10 h-10 rounded-full cursor-pointer object-cover transition-transform duration-300 hover:scale-150"
+        onClick={() => setShowModal(true)}
+      />
+      {user && (
+        <button
+          className="text-white bg-orange-400 px-2 py-1 rounded hover:bg-orange-600 text-sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowDropdown((prev) => !prev);
+          }}
+        >
+          ⚙️ Edit
+        </button>
+      )}
+    </div>
+  </div>
+
+  {/* Dropdown Menu - Positioned absolutely */}
+  {showDropdown && user && (
+    <div className="absolute top-full right-2 mt-1 bg-white border p-4 rounded shadow-lg z-50 min-w-[200px] max-w-[280px]">
+      <p className="font-bold mb-2 text-gray-800">{user.name}</p>
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        Upload Profile Photo
+      </label>
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange}
+        className="text-sm w-full mb-2"
+      />
+      {previewPhoto && (
+        <img
+          src={previewPhoto}
+          alt="Preview"
+          className="w-16 h-16 mt-2 rounded-full object-cover border mx-auto"
+        />
+      )}
+      <div className="flex gap-2 mt-3 justify-center">
+        {selectedFile && (
+          <button
+            onClick={handleSave}
+            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition text-sm"
+          >
+            Save
+          </button>
+        )}
+        {user?.photo && (
+          <button
+            onClick={async () => {
+              const confirmed = window.confirm("Are you sure you want to remove the profile photo?");
+              if (!confirmed) return;
+              
+              const updatedUser = { ...user, photo: null };
+              setUser(updatedUser);
+              localStorage.setItem("user", JSON.stringify(updatedUser));
+              
+              try {
+                const response = await fetch(
+                  `${import.meta.env.VITE_API_URL}/api/users/${user._id}/upload-photo`,
+                  {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ photo: null }),
+                  }
+                );
+                if (!response.ok) throw new Error("Delete failed");
+                toast.success("Profile photo removed!");
+              } catch (error) {
+                console.error("Error removing photo:", error);
+              }
+            }}
+            className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-sm"
+          >
+            Reset
+          </button>
+        )}
+      </div>
+    </div>
+  )}
+
+  {/* Modal - Same as before */}
+  {showModal && user?.photo && (
+    <div
+      className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
+      onClick={() => setShowModal(false)}
+    >
+      <div
+        className="relative bg-white p-4 rounded-lg shadow-lg max-w-[90%] max-h-[90%]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <img
+          src={user.photo}
+          alt="Full View"
+          className="max-h-[75vh] w-auto object-contain mx-auto"
+        />
+        <button
+          className="absolute top-2 right-2 text-black bg-gray-200 px-2 py-1 rounded hover:bg-gray-300"
+          onClick={() => setShowModal(false)}
+        >
+          ✕
+        </button>
+      </div>
+    </div>
+  )}
+</nav>
 
       {chits.length > 0 ? (
         <div className="p-4">
