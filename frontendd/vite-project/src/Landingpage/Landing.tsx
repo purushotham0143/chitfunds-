@@ -100,7 +100,7 @@ const Landing = () => {
 console.log("user:", user);                     // Is user null or missing?
 console.log("user._id:", user?._id);            // Confirm _id is present
 
-  if (!selectedFile || !user?.id) {
+  if (!selectedFile || !user?._id) {
     console.log("Missing selectedFile or user ID");
     return;
   }
@@ -108,7 +108,7 @@ console.log("user._id:", user?._id);            // Confirm _id is present
   console.log("Selected file (base64):", selectedFile);
   console.log("User ID:", user._id);
 
-  const apiUrl = `${import.meta.env.VITE_API_URL}/api/users/${user.id}/upload-photo`;
+  const apiUrl = `${import.meta.env.VITE_API_URL}/api/users/${user._id}/upload-photo`;
   console.log("Uploading to:", apiUrl);
 
   try {
@@ -174,8 +174,6 @@ console.log("user._id:", user?._id);            // Confirm _id is present
 
   return (
     <div>
-      // Replace your entire nav section with this version that handles login state changes:
-
 <nav className="bg-orange-500 text-black p-2 rounded-sm relative">
   {/* Mobile Layout */}
   <div className="md:hidden">
