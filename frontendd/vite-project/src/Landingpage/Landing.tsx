@@ -174,8 +174,6 @@ console.log("user._id:", user?._id);            // Confirm _id is present
 
   return (
     <div>
-      // Replace your entire nav section with this version that handles login state changes:
-
 <nav className="bg-orange-500 text-black p-2 rounded-sm relative">
   {/* Mobile Layout */}
   <div className="md:hidden">
